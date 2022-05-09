@@ -51,6 +51,9 @@ class ClippingView @JvmOverloads constructor(
         clipRectBottom - rectInset
     )
 
+    private val rejectRow = rowFour + rectInset + 2*clipRectBottom
+
+
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -63,7 +66,7 @@ class ClippingView @JvmOverloads constructor(
         drawOutsideClippingExample(canvas)
         drawSkewedTextExample(canvas)
         drawTranslatedTextExample(canvas)
-        // drawQuickRejectExample(canvas)
+        drawQuickRejectExample(canvas)
     }
 
     private fun drawClippedRectangle(canvas: Canvas) {
@@ -253,6 +256,32 @@ class ClippingView @JvmOverloads constructor(
     }
 
     private fun drawQuickRejectExample(canvas: Canvas) {
+        val inClipRectangle = RectF(clipRectRight / 2,
+            clipRectBottom / 2,
+            clipRectRight * 2,
+            clipRectBottom * 2)
+
+        val notInClipRectangle = RectF(RectF(clipRectRight+1,
+            clipRectBottom+1,
+            clipRectRight * 2,
+            clipRectBottom * 2))
+
+        canvas.save()
+        canvas.translate(columnOne, rejectRow)
+        canvas.clipRect(
+            clipRectLeft,clipRectTop,
+            clipRectRight,clipRectBottom
+        )
+        if (canvas.quickReject(
+                notInClipRectangle, Canvas.EdgeType.AA)) {
+            canvas.drawColor(Color.WHITE)
+        }
+        else {
+            canvas.drawColor(Color.BLACK)
+            canvas.drawRect(inClipRectangle, paint
+            )
+        }
+        canvas.restore()
     }
 
 }
